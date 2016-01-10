@@ -2,7 +2,6 @@ require 'socket'
 require 'openssl'
 
 class CertificateFetcher
-
   # Connect to the +domain+ and return a hash of details about the SSL
   # certificate served by the dmoain.
   def self::fetch_cert_details(domain)
@@ -16,13 +15,12 @@ class CertificateFetcher
     subjectprops = OpenSSL::X509::Name.new(cert.subject).to_a
     issuerprops = OpenSSL::X509::Name.new(cert.issuer).to_a
 
-    return {
+    {
       content: cert.to_s,
-      org: subjectprops.select { |name, data, type| name == "O" }.first[1],
-      domain: subjectprops.select { |name, data, type| name == "CN" }.first[1],
-      issuer: issuerprops.select { |name, data, type| name == "O" }.first[1],
+      org: subjectprops.find { |name, _data, _type| name == 'O' }[1],
+      domain: subjectprops.find { |name, _data, _type| name == 'CN' }[1],
+      issuer: issuerprops.find { |name, _data, _type| name == 'O' }[1],
       expiry: cert.not_after
     }
   end
-
 end
