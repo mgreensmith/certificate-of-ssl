@@ -19,28 +19,7 @@ class DocumentGenerator
     @pdf = Prawn::Document.new(page_layout: :landscape, margin: 0)
   end
 
-  def import_fonts
-    FONTS.each do |f|
-      @pdf.font_families[f] = { normal: { file: "#{ASSET_DIR}/#{f}.ttf", font: f }}
-    end
-  end
-
-  def description_line(text)
-    @pdf.font 'Miama'
-    @pdf.text text, size: 20, align: :center, inline_format: true
-  end
-
-  def value_line(text)
-    @pdf.move_down '0.1'.to_f.in
-    @pdf.font "Alpine"
-    @pdf.text text, size: 22, align: :center
-    @pdf.move_down '0.1'.to_f.in
-  end
-
-  def value_inline(text)
-    "<font name='Alpine' size='14'> #{text} </font>"
-  end
-
+  # Generate a PDF document that is an SSL "certificate" for this instance.
   def generate_certificate
     import_fonts
 
@@ -78,7 +57,28 @@ class DocumentGenerator
 
   end
 
+  private
+
+  def import_fonts
+    FONTS.each do |f|
+      @pdf.font_families[f] = { normal: { file: "#{ASSET_DIR}/fonts/#{f}.ttf", font: f }}
+    end
+  end
+
+  def description_line(text)
+    @pdf.font 'Miama'
+    @pdf.text text, size: 20, align: :center, inline_format: true
+  end
+
+  def value_line(text)
+    @pdf.move_down '0.1'.to_f.in
+    @pdf.font "Alpine"
+    @pdf.text text, size: 22, align: :center
+    @pdf.move_down '0.1'.to_f.in
+  end
+
+  def value_inline(text)
+    "<font name='Alpine' size='14'> #{text} </font>"
+  end
+
 end
-
-
-
