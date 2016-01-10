@@ -47,7 +47,7 @@ class DocumentGenerator
     @pdf.image "#{ASSET_DIR}/background.png", fit: [11.in, "8.5".to_f.in]
 
     @pdf.formatted_text_box [{ text: @content, font: "Courier" }], 
-      at: ['1.75'.to_f.in, 6.in], height: '4.5'.to_f.in, width: 3.in, overflow: :shrink_to_fit
+      at: ['1.75'.to_f.in, 6.in], height: '4.5'.to_f.in, width: '3.25'.to_f.in, overflow: :shrink_to_fit
 
     @pdf.formatted_text_box [{ text: "Certificate of SSL", font: "OldEnglishFive", size: 36 }], 
       at: ['2.85'.to_f.in, 7.in]
@@ -68,7 +68,7 @@ class DocumentGenerator
       
       @pdf.move_down '0.4'.to_f.in
       @pdf.font "Scriptina"
-      @pdf.text "DigiCert Inc.", size: 20, align: :center, color: "003366" #nignight blue
+      @pdf.text @issuer, size: 20, align: :center, color: "003366" #nignight blue
 
       @pdf.font "Miama"
       @pdf.text "Issuing Authority", size: 16, align: :center
