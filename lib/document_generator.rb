@@ -25,7 +25,11 @@ class DocumentGenerator
     @pdf.image "#{ASSET_DIR}/background.png", fit: [11.in, '8.5'.to_f.in]
 
     @pdf.formatted_text_box [{ text: @content, font: 'Courier' }],
-                            at: ['1.75'.to_f.in, 6.in], height: '4.5'.to_f.in, width: '3.25'.to_f.in, overflow: :shrink_to_fit
+                            at: ['1.75'.to_f.in, 6.in],
+                            height: '3.5'.to_f.in,
+                            width: '3.25'.to_f.in,
+                            overflow: :shrink_to_fit,
+                            valign: :center
 
     @pdf.formatted_text_box [{ text: 'Certificate of SSL', font: 'OldEnglishFive', size: 36 }],
                             at: ['2.85'.to_f.in, 7.in]
