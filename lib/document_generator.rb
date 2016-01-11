@@ -18,7 +18,16 @@ class DocumentGenerator
     @pdf = Prawn::Document.new(page_layout: :landscape, margin: 0)
   end
 
-  # Generate a PDF document that is an SSL "certificate" for this instance.
+  def certificate_file
+    generate_certificate
+    file = "#{OUTPUT_DIR}/#{@domain.gsub(/\./, '_')}.pdf"
+    @pdf.render_file file
+    return file
+  end
+
+  private
+
+    # Generate a PDF document that is an SSL "certificate" for this instance.
   def generate_certificate
     import_fonts
 
@@ -55,10 +64,8 @@ class DocumentGenerator
       @pdf.text 'Issuing Authority', size: 16, align: :center
     end
 
-    @pdf.render_file "#{OUTPUT_DIR}/cert.pdf"
-  end
 
-  private
+  end
 
   def import_fonts
     FONTS.each do |f|
