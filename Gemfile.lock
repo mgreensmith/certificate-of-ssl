@@ -9,6 +9,7 @@ GEM
     prawn (2.0.2)
       pdf-core (~> 0.6.0)
       ttfunk (~> 1.4.0)
+    puma (2.15.3)
     rack (1.6.0)
     rack-protection (1.5.3)
       rack
@@ -26,4 +27,5 @@ DEPENDENCIES
   httpclient
   ordinalize
   prawn
+  puma
   sinatra
