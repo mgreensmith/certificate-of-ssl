@@ -1,26 +1,29 @@
-require 'socket'
-require 'openssl'
+require 'httpclient'
 
 class CertificateFetcher
   # Connect to the +domain+ and return a hash of details about the SSL
-  # certificate served by the dmoain.
+  # certificate served by the domain.
   def self::fetch_cert_details(domain)
-    tcp_client = TCPSocket.new(domain, 443)
-    ssl_client = OpenSSL::SSL::SSLSocket.new(tcp_client)
-    ssl_client.connect
-    cert = OpenSSL::X509::Certificate.new(ssl_client.peer_cert)
-    ssl_client.sysclose
-    tcp_client.close
+    https_url = 'https://' + domain.gsub(/^https?:\/\//, '')
+    client = HTTPClient.new
+    client.connect_timeout = 2
+    client.receive_timeout = 2
+
+    cert = OpenSSL::X509::Certificate.new(client.head(https_url).peer_cert)
 
     subjectprops = OpenSSL::X509::Name.new(cert.subject).to_a
     issuerprops = OpenSSL::X509::Name.new(cert.issuer).to_a
 
     {
       content: cert.to_s,
-      org: subjectprops.find { |name, _data, _type| name == 'O' }[1],
-      domain: subjectprops.find { |name, _data, _type| name == 'CN' }[1],
-      issuer: issuerprops.find { |name, _data, _type| name == 'O' }[1],
-      expiry: cert.not_after
+      org: subjectprops.find { |name, _, _| name == 'O' }[1],
+      domain: subjectprops.find { |name, _, _| name == 'CN' }[1],
+      issuer: issuerprops.find { |name, _, _| name == 'O' }[1],
+      valid_date: cert.not_before,
+      expiry_date: cert.not_after
     }
+
+  rescue
+    return {}
   end
 end

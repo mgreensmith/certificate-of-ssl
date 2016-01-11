@@ -7,6 +7,10 @@ require 'bundler/setup'
 require 'document_generator'
 require 'certificate_fetcher'
 
-c = CertificateFetcher.fetch_cert_details(ARGV[0])
+cert_details = CertificateFetcher.fetch_cert_details(ARGV[0])
 
-DocumentGenerator.new(c[:content], c[:org], c[:domain], c[:issuer], c[:expiry]).generate_certificate
+if cert_details.empty?
+  puts "ERROR: Could not fetch certificate from #{ARGV[0]}"
+else
+  puts DocumentGenerator.new(cert_details).certificate_file
+end

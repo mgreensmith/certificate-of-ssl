@@ -8,12 +8,13 @@ class DocumentGenerator
   ASSET_DIR = File.expand_path('../../assets', __FILE__)
   OUTPUT_DIR = File.expand_path('../../out', __FILE__)
 
-  def initialize(content, org, domain, issuer, expiry)
-    @content = content
-    @org = org
-    @domain = domain
-    @issuer = issuer
-    @expiry = expiry
+  def initialize(cert_details)
+    @content = cert_details[:content]
+    @org = cert_details[:org]
+    @domain = cert_details[:domain]
+    @issuer = cert_details[:issuer]
+    @valid_date = cert_details[:valid_date]
+    @expiry_date = cert_details[:expiry_date]
 
     @pdf = Prawn::Document.new(page_layout: :landscape, margin: 0)
   end
@@ -22,12 +23,12 @@ class DocumentGenerator
     generate_certificate
     file = "#{OUTPUT_DIR}/#{@domain.gsub(/\./, '_')}.pdf"
     @pdf.render_file file
-    return file
+    file
   end
 
   private
 
-    # Generate a PDF document that is an SSL "certificate" for this instance.
+  # Generate a PDF document that is an SSL "certificate" for this instance.
   def generate_certificate
     import_fonts
 
@@ -50,10 +51,10 @@ class DocumentGenerator
       value_line @org
       description_line 'for the protection and security of'
       value_line @domain
-      description_line "with our full authority and trust,\nuntil the %s day of %s, %s." % [
-        value_inline(@expiry.day.ordinalize),
-        value_inline(@expiry.strftime('%B')),
-        value_inline(@expiry.year)
+      description_line "with our full authority and trust,\nuntil the %s day of %s, %s" % [
+        value_inline(@expiry_date.day.ordinalize),
+        value_inline(@expiry_date.strftime('%B')),
+        value_inline(@expiry_date.year)
       ]
 
       @pdf.move_down '0.4'.to_f.in
@@ -63,8 +64,6 @@ class DocumentGenerator
       @pdf.font 'Miama'
       @pdf.text 'Issuing Authority', size: 16, align: :center
     end
-
-
   end
 
   def import_fonts
